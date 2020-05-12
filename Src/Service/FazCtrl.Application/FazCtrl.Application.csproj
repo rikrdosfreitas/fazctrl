@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Infrastructure\FazCtrl.Infrastructure.Sql\FazCtrl.Infrastructure.Sql.csproj" />
     <ProjectReference Include="..\..\Infrastructure\FazCtrl.Infrastructure\FazCtrl.Infrastructure.csproj" />
     <ProjectReference Include="..\FazCtrl.Domain\FazCtrl.Domain.csproj" />
   </ItemGroup>

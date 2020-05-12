@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FazCtrl.Infrastructure.Sql.SqlEventStore.Utilities;
 using MediatR;
 
-namespace FazCtrl.Api.Application.Behaviors
+namespace FazCtrl.Application.Behaviors
 {
     public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
