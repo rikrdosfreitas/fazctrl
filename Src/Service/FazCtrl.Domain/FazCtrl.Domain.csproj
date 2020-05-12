@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\FazCtrl.Contract\FazCtrl.Contract.csproj" />
+    <ProjectReference Include="..\..\Common\FazCtrl.Contract\FazCtrl.Contract.csproj" />
   </ItemGroup>
 
 </Project>

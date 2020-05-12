@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FazCtrl.Infrastructure.Azure", "Src\Infrastructure\FazCtrl.Infrastructure.Azure\FazCtrl.Infrastructure.Azure.csproj", "{C8C5A20D-C756-465F-9BA7-11EE7169F3DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Src\Infrastructure\FazCtrl.Infrastructure.Azure", "Src\Infrastructure\FazCtrl.Infrastructure.Azure\FazCtrl.Infrastructure.Azure.csproj", "{C8C5A20D-C756-465F-9BA7-11EE7169F3DB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{703FA869-9DB1-4535-BA7A-A3D18B0BB752}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FazCtrl.Test", "FazCtrl.Test\FazCtrl.Test.csproj", "{85C3555B-7C41-4AE2-8BE1-FDFA9AE32B84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FazCtrl.Test", "Test\FazCtrl.Test\FazCtrl.Test.csproj", "{85C3555B-7C41-4AE2-8BE1-FDFA9AE32B84}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{F65BCDF1-9B76-4A10-9B44-C1B4AC3B1D92}"
 EndProject
@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FazCtrl.Domain", "Src\Servi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E76C5A10-65F0-4583-A9E2-2AEAB4C61978}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FazCtrl.Contract", "FazCtrl.Contract\FazCtrl.Contract.csproj", "{BFF9ED26-9B53-436C-8614-C491D7BDD59F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FazCtrl.Contract", "Src\Common\FazCtrl.Contract\FazCtrl.Contract.csproj", "{BFF9ED26-9B53-436C-8614-C491D7BDD59F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FazCtrl.Api", "Src\Service\FazCtrl.Api\FazCtrl.Api.csproj", "{835ED766-358B-426C-95AE-16D1C66B08C2}"
 EndProject
