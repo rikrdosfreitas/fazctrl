@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="EventSourcing\**" />
+    <EmbeddedResource Remove="EventSourcing\**" />
+    <None Remove="EventSourcing\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="AzureEventSourceRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="EventSourcing\EventStore.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.7" />
+    <PackageReference Include="Microsoft.Azure.Storage.Common" Version="11.1.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\FazCtrl.Common\FazCtrl.Common.csproj" />
+    <ProjectReference Include="..\FazCtrl.Infrastructure\FazCtrl.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
