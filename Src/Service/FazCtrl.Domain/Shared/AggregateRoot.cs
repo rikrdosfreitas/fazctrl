@@ -15,6 +15,12 @@ namespace FazCtrl.Domain.Shared
             Version = 0;
         }
 
+
+        AggregateRoot(Guid id, IEnumerable<IDomainEvent> history)
+        {
+            throw new NotImplementedException();
+        }
+
         public Guid Id { get; protected set; }
 
         public int Version { get; protected set; }

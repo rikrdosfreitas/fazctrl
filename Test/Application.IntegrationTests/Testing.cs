@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading.Tasks;
 using FazCtrl.Api;
 using FazCtrl.Contract.Interfaces;
-using FazCtrl.Domain.Shared;
 using FazCtrl.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;

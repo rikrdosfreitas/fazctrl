@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FazCtrl.Application.Command;
+using FazCtrl.Application.Command.Grazing;
 using FazCtrl.Domain;
 using FazCtrl.Domain.GrazingAggregate;
 using FazCtrl.Infrastructure;

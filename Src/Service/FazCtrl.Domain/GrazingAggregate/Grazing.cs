@@ -20,11 +20,7 @@ namespace FazCtrl.Domain.GrazingAggregate
 
         private Grazing(Guid id, string name, decimal hectares) : this(id)
         {
-            Name = name;
-            Hectares = hectares;
-            Balance = 0;
-
-            Raise(new GrazingCreated(Id, Name, Hectares, Balance, Version));
+           Raise(new GrazingCreated(Id, name, hectares,0, Version));
         }
 
         public Grazing(Guid id, IEnumerable<IDomainEvent> history) : this(id)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using FazCtrl.Domain;
 
-namespace FazCtrl.Application.Command
+namespace FazCtrl.Application.Command.Grazing
 {
     public class AddAnimalInGrazingCommand : ICommand
     {

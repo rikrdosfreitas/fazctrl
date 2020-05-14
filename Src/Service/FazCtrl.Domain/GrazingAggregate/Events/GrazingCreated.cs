@@ -7,10 +7,7 @@ namespace FazCtrl.Domain.GrazingAggregate.Events
     public class GrazingCreated : DomainEvent
     {
         [JsonConstructor]
-        private GrazingCreated()
-        {
-
-        }
+        private GrazingCreated() { }
 
         public GrazingCreated(Guid id, string name, decimal hectares, int balance, int version) : base(id, version)
         {

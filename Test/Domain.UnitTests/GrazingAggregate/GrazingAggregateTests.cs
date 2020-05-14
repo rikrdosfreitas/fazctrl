@@ -5,29 +5,35 @@ using FazCtrl.Domain.GrazingAggregate;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Domain.UnitTests.Grazing
+namespace Domain.UnitTests.GrazingAggregate
 {
-    public class GrazingTests
+    public class GrazingAggregateTests
     {
         [Test]
         public void WhenTheGrazingIsCreatedTheBalanceIsZero()
         {
-            FazCtrl.Domain.GrazingAggregate.Grazing entity = FazCtrl.Domain.GrazingAggregate.Grazing.Create(id: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB4"), name: "Grazing 356", hectares: 158.4m);
+            var entity = Grazing.Create(id: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB4"), name: "Grazing 356", hectares: 158.4m);
 
             entity.Should().NotBeNull();
+            entity.Events.Should().HaveCount(1);
+            entity.Version.Should().Be(1);
             entity.Balance.Should().Be(0);
         }
 
         [Test]
         public void WhenAddingAnyAnimalInTheGrazingItMustBeAddedToTheBalance()
         {
-            FazCtrl.Domain.GrazingAggregate.Grazing entity = FazCtrl.Domain.GrazingAggregate.Grazing.Create(id: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB4"), name: "Grazing 356", hectares: 158.4m);
+            Grazing entity = Grazing.Create(id: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB4"), name: "Grazing 356", hectares: 158.4m);
 
             entity.Should().NotBeNull();
+            entity.Events.Should().HaveCount(1);
+            entity.Version.Should().Be(1);
 
             entity.AddAnimals(new List<GrazingAnimal> { GrazingAnimal.Create(animalId: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB3"), deal: 10) }
             );
 
+            entity.Events.Should().HaveCount(2);
+            entity.Version.Should().Be(2);
             entity.Balance.Should().Be(10);
             entity.Animals.First().Deal.Should().Be(10);
         }
@@ -35,12 +41,13 @@ namespace Domain.UnitTests.Grazing
         [Test]
         public void WhenRemoveAnyAnimalInTheGrazingItMustBeRemovedToTheBalance()
         {
-            FazCtrl.Domain.GrazingAggregate.Grazing entity = FazCtrl.Domain.GrazingAggregate.Grazing.Create(id: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB4"), name: "Grazing 356", hectares: 158.4m);
+            Grazing entity = Grazing.Create(id: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB4"), name: "Grazing 356", hectares: 158.4m);
 
             entity.AddAnimals(new List<GrazingAnimal> { GrazingAnimal.Create(animalId: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB3"), deal: 10) });
-
-
             entity.RemoveAnimals(new List<GrazingAnimal> { GrazingAnimal.Create(animalId: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB3"), deal: 5) });
+
+            entity.Events.Should().HaveCount(3);
+            entity.Version.Should().Be(3);
 
             entity.Balance.Should().Be(5);
             entity.Animals.First().Deal.Should().Be(5);
@@ -49,7 +56,7 @@ namespace Domain.UnitTests.Grazing
         [Test]
         public void WhenRemoveAnyAnimalAndAnimalNotInGrazingMustBeThrow()
         {
-            FazCtrl.Domain.GrazingAggregate.Grazing entity = FazCtrl.Domain.GrazingAggregate.Grazing.Create(id: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB4"), name: "Grazing 356", hectares: 158.4m);
+            Grazing entity = Grazing.Create(id: Guid.Parse("C9F15999-5386-40C4-BCA6-FD920AC6BDB4"), name: "Grazing 356", hectares: 158.4m);
 
             FluentActions.Invoking(() =>
                 entity.RemoveAnimals(new List<GrazingAnimal>
