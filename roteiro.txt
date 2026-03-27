@@ -1,0 +1,623 @@
+A ideia aqui é detalhar cada entidade e subentidade, separando os atributos obrigatórios (obrigatorio) e opcionais (opcionais ), já pensando na modelagem lógica que você poderá usar no banco de dados.
+🧬 DOMÍNIO REPRODUTIVO
+
+O domínio reprodutivo engloba todo o ciclo da fêmea — da aplicação de um protocolo até o parto — e os registros auxiliares como sêmen, embriões, técnicos e diagnósticos.
+1. 🧫 ProtocoloReprodutivo
+
+Define o modelo de protocolo (ex: “IATF 7 dias com BE + PG + ECP”), usado como base para múltiplas aplicações.
+Tipo    Atributo    Descrição
+obrigatorio    Id    Identificador único
+obrigatorio    Nome    Nome do protocolo
+obrigatorio    Tipo    Enum: {IATF, IA, FIV, TE}
+opcionais     Descricao    Explicação geral
+obrigatorio    Especie    Ex: bovino
+opcionais     CategoriaAnimal    Ex: vaca, novilha
+opcionais     DuracaoDias    Duração total estimada
+opcionais     Ativo    Booleano
+2. ⏱️ EtapaProtocolo
+
+Subentidade de ProtocoloReprodutivo, define as etapas que o técnico irá seguir.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    ProtocoloReprodutivoId    FK
+obrigatorio    Ordem    Sequência da etapa
+obrigatorio    Descricao    Ex: “Aplicar BE 2mg”
+opcionais     DiasAposInicio    
+opcionais     Medicamento    
+opcionais     Dose    
+opcionais     ViaAdministracao    
+opcionais     Observacoes    
+3. 🧬 CicloReprodutivo
+
+Representa a aplicação prática de um protocolo em um animal.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    Fêmea tratada
+obrigatorio    ProtocoloReprodutivoId    
+obrigatorio    DataInicio    
+opcionais     DataFim    
+obrigatorio    Status    Enum: {EmAndamento, Finalizado, Abortado}
+opcionais     ResultadoFinal    Enum: {Gestante, NaoGestante, Aborto}
+opcionais     Observacoes    
+4. 💉 Inseminacao
+
+Registra o ato da inseminação (pode pertencer a um ciclo ou ser individual).
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    
+opcionais     CicloReprodutivoId    
+obrigatorio    Data    
+opcionais     Hora    
+obrigatorio    Tipo    Enum: {IATF, Convencional, FIV, TE}
+opcionais     SememId    
+opcionais     TecnicoId    
+opcionais     MetodoAplicacao    
+opcionais     Observacoes    
+5. 🧫 Semem
+
+Catálogo de sêmen disponível.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    Codigo    Código do touro / amostra
+opcionais     Touro    
+opcionais     Raca    
+opcionais     Origem    Ex: CRV Lagoa
+opcionais     Lote    
+opcionais     Validade    
+opcionais     QuantidadeDoses    
+opcionais     LocalArmazenamento    
+opcionais     Status    {Ativo, Esgotado}
+6. 🩺 DiagnosticoGestacao
+
+Usado para registrar o resultado de exames de prenhez.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    
+obrigatorio    Data    
+obrigatorio    Metodo    Enum: {Ultrassom, Palpacao, Observacao}
+obrigatorio    Resultado    Enum: {Gestante, Vazia, Aborto}
+opcionais     TecnicoId    
+opcionais     Observacoes    
+7. 🧫 ProcedimentoEmbriologico
+
+Cobre coleta de óvulos, FIV, TE e congelações.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    Tipo    Enum: {ColetaOvulos, FIV, TransferenciaEmbriao, Congelamento}
+obrigatorio    Data    
+opcionais     DoadoraId    
+opcionais     ReceptoraId    
+opcionais     QtdOvulosColetados    
+opcionais     QtdFertilizados    
+opcionais     QtdTransferidos    
+opcionais     QtdCongelados    
+opcionais     TecnicoId    
+opcionais     Observacoes    
+8. 👶 Parto
+
+Registra o evento de nascimento.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    MaeId    
+obrigatorio    DataParto    
+opcionais     HoraParto    
+opcionais     TipoParto    Enum: {Normal, Cesariana, Assistido}
+opcionais     QtdeCrias    
+opcionais     Complicacoes    
+opcionais     TecnicoId    
+opcionais     Observacoes    
+9. 🐄 Nascimento
+
+Registra cada cria nascida (ligada ao parto).
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    PartoId    
+obrigatorio    Sexo    
+opcionais     PesoNascimento    
+opcionais     Status    {Vivo, Morto}
+opcionais     CodigoBrinco    
+opcionais     Nome    
+opcionais     Observacoes    
+10. 👩‍⚕️ Tecnico
+
+Registro dos técnicos envolvidos nos processos (veterinário, inseminador, ultrassonografista, etc.)
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    Nome    
+opcionais     Funcao    Enum: {Veterinario, Inseminador, TecnicoCampo}
+opcionais     RegistroProfissional    
+opcionais     Telefone    
+opcionais     Email    
+opcionais     Ativo    
+🔗 Relacionamentos (resumo lógico)
+Entidade    Relacionamentos
+Animal    1:N CicloReprodutivo, 1:N Inseminacao, 1:N DiagnosticoGestacao, 1:N Parto, 1:N ProcedimentoEmbriologico
+ProtocoloReprodutivo    1:N EtapaProtocolo, 1:N CicloReprodutivo
+CicloReprodutivo    1:N Inseminacao, 1:N DiagnosticoGestacao, 1:1 Parto
+Parto    1:N Nascimento
+Tecnico    1:N Inseminacao, DiagnosticoGestacao, ProcedimentoEmbriologico, Parto
+Semem    1:N Inseminacao
+
+🐄 DOMÍNIO DE REBANHO
+
+Abrange o cadastro e controle dos animais, genealogia (pai/mãe), lotes/pastos, categorias, e eventos de entrada e saída.
+1. 🐮 Animal
+
+Representa cada indivíduo identificado na fazenda.
+Tipo    Atributo    Descrição
+obrigatorio    Id    Identificador único do animal
+obrigatorio    CodigoInterno    Código único no sistema (ex: A001)
+opcionais     Brinco    Código físico na orelha ou tag
+opcionais     Nome    Nome do animal (opcional, útil para matrizes)
+obrigatorio    Especie    Ex: Bovino, Ovino, Caprino
+obrigatorio    Raca    Raça principal (Nelore, Holandês etc.)
+obrigatorio    Sexo    Enum: {Macho, Fêmea}
+opcionais     DataNascimento    
+opcionais     Origem    Enum: {NascidoFazenda, Comprado, Doacao, Transferido}
+opcionais     PesoNascimento    
+opcionais     CorPelagem    
+opcionais     CategoriaZootecnicaId    FK → CategoriaZootecnica
+opcionais     LoteId    FK → Lote/Pasto
+opcionais     MaeId    FK → Animal (autorreferência)
+opcionais     PaiId    FK → Animal (autorreferência)
+opcionais     DataEntradaFazenda    
+opcionais     DataSaidaFazenda    
+opcionais     MotivoSaida    Ex: venda, morte, abate, desaparecido
+obrigatorio    Status    Enum: {Ativo, Vendido, Morto, Desaparecido, Transferido}
+opcionais     PesoAtual    
+opcionais     DataUltimaPesagem    
+opcionais     Observacoes    
+opcionais     FotoUrl    
+2. 🐂 CategoriaZootecnica
+
+Define as categorias produtivas e de manejo (ajuda no controle por idade e sexo).
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    Nome    Ex: Bezerro, Novilha, Vaca, Touro, Garrote
+opcionais     Descricao    
+opcionais     Especie    
+opcionais     IdadeMinimaMeses    
+opcionais     IdadeMaximaMeses    
+opcionais     Ativo    
+3. 🌿 Lote / Pasto
+
+Usado para agrupar animais fisicamente ou por manejo.
+Um lote pode ser um pasto físico ou um grupo funcional (ex: “Matrizes gestantes”).
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    Nome    Nome do lote/pasto
+opcionais     Descricao    
+opcionais     Tipo    Enum: {Pasto, Confinamento, LoteReproducao, Lactacao, Isolamento}
+opcionais     CapacidadeAnimais    
+opcionais     TamanhoHectares    
+opcionais     TipoPastagem    Ex: Brachiaria, Mombaça
+opcionais     DataUltimaRotacao    
+opcionais     LocalizacaoGPS    
+opcionais     Ativo    
+opcionais     Observacoes    
+4. 📥 EventoEntradaAnimal
+
+Registra a entrada de um ou mais animais na fazenda.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    
+obrigatorio    DataEntrada    
+opcionais     Origem    Ex: compra, nascimento, transferência
+opcionais     DocumentoOrigem    Nota fiscal, guia de trânsito
+opcionais     PesoEntrada    
+opcionais     LoteInicialId    
+opcionais     Observacoes    
+5. 📤 EventoSaidaAnimal
+
+Registra quando o animal deixa o rebanho.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    
+obrigatorio    DataSaida    
+obrigatorio    Motivo    Enum: {Venda, Morte, Abate, Transferencia, Descarte}
+opcionais     DocumentoSaida    
+opcionais     Destino    
+opcionais     PesoSaida    
+opcionais     ValorVenda    
+opcionais     Observacoes    
+6. ⚖️ HistoricoPeso
+
+Histórico das pesagens do animal (controla crescimento e ganho de peso).
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    
+obrigatorio    DataPesagem    
+obrigatorio    PesoKg    
+opcionais     Tipo    Enum: {Nascimento, Desmama, Entrada, Rotina, Saida}
+opcionais     OperadorId    
+opcionais     Observacoes    
+7. 🧾 RegistroGenealogico
+
+Permite vincular genealogia oficial (registro em associação de criadores).
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    
+obrigatorio    NumeroRegistro    
+opcionais     Associação    Ex: ABCZ
+opcionais     CategoriaRegistro    Ex: PO, LA, CCG
+opcionais     DataRegistro    
+opcionais     Observacoes    
+8. 📸 FotoAnimal
+
+Permite múltiplas fotos (para histórico visual, comparação, relatórios).
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    
+obrigatorio    Url    
+opcionais     DataFoto    
+opcionais     Descricao    
+opcionais     Principal    Booleano
+🔗 RELACIONAMENTOS PRINCIPAIS
+Entidade    Relacionamentos
+Animal    1:N HistoricoPeso, 1:N EventoSanitario, 1:N CicloReprodutivo, 1:N EventoSaidaAnimal, 1:N FotoAnimal
+Animal (autorreferência)    Pai e Mãe → outros Animal
+Lote    1:N Animal
+CategoriaZootecnica    1:N Animal
+Animal ↔ EventoEntradaAnimal    1:1 (registro de origem)
+Animal ↔ EventoSaidaAnimal    1:1 (registro de destino)
+🧩 Considerações de Modelagem
+
+    Cada animal deve ter categoria derivada automaticamente da idade + sexo (pode ser calculada por regra).
+    A genealogia (pai/mãe) deve permitir autorreferência, com controle de integridade (ex: mãe ≠ filho).
+    O lote atual deve ser controlado via histórico de movimentação, permitindo rastrear quando entrou e saiu.
+    O histórico de peso deve ter gatilho para atualizar PesoAtual do animal.
+    O status do animal muda automaticamente quando há evento de saída, morte ou transferência.
+
+
+💉 DOMÍNIO SANITÁRIO
+
+Este domínio se divide em 6 subentidades principais:
+
+    EventoSanitario – registro genérico de uma ação sanitária
+    TipoEventoSanitario – classificação do tipo de ação (vacinação, vermifugação etc.)
+    Medicamento / Vacina – catálogo de produtos aplicados
+    TratamentoAnimal – tratamento contínuo para doença ou ferimento
+    DoencaAnimal – diagnóstico e histórico de doenças
+    ExameLaboratorial – exames clínicos e laboratoriais realizados
+
+1. 💉 EventoSanitario
+
+Registro individual ou em grupo de uma aplicação sanitária (vacina, vermífugo, medicamento, exame, casqueamento etc.).
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    TipoEventoSanitarioId    FK → TipoEventoSanitario
+opcionais     MedicamentoId    FK → Medicamento/Vacina
+obrigatorio    DataAplicacao    
+opcionais     HoraAplicacao    
+obrigatorio    AnimalId    FK → Animal
+opcionais     LoteId    se aplicado em grupo
+opcionais     Dose    
+opcionais     UnidadeDose    mL, g, UI, etc.
+opcionais     ViaAdministracao    intramuscular, subcutânea, oral etc.
+opcionais     ResponsavelId    FK → Funcionario/Técnico
+opcionais     ProximaAplicacao    
+opcionais     LocalAplicacao    Ex: pescoço esquerdo
+opcionais     Observacoes    
+
+    💡 Recomenda-se usar um campo “ReforçoPrevistoEmDias” em TipoEventoSanitario para calcular automaticamente “ProximaAplicacao”.
+
+2. 🧾 TipoEventoSanitario
+
+Catálogo para classificar os tipos de eventos (padroniza relatórios e notificações).
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    Nome    Ex: Vacinação, Vermifugação, Casqueamento
+opcionais     Descricao    
+opcionais     ReforcoPrevistoEmDias    
+opcionais     Ativo    
+opcionais     CategoriaAplicavel    Ex: bezerros, vacas, touros
+3. 💊 Medicamento / Vacina
+
+Tabela de produtos utilizados em eventos sanitários.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    NomeComercial    
+opcionais     SubstanciaAtiva    
+opcionais     Fabricante    
+opcionais     Tipo    Enum: {Vacina, Vermifugo, Antibiotico, Suplemento, Hormônio, Outros}
+opcionais     Unidade    mL, dose, comprimido
+opcionais     Lote    
+opcionais     Validade    
+opcionais     EstoqueAtual    
+opcionais     CustoUnitario    
+opcionais     LocalArmazenamento    
+opcionais     Observacoes    
+4. 🧠 TratamentoAnimal
+
+Registro de tratamentos prolongados (ex: infecção, mastite, ferimento).
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    
+obrigatorio    DataInicio    
+opcionais     DataFim    
+obrigatorio    Diagnostico    Ex: mastite, pneumonia
+opcionais     MedicamentoId    
+opcionais     Dose    
+opcionais     Frequencia    Ex: 1x/dia
+opcionais     DuracaoDias    
+opcionais     ResponsavelId    
+opcionais     Resultado    Enum: {Curado, EmTratamento, Óbito, SemMelhora}
+opcionais     Observacoes    
+
+    💡 Pode gerar automaticamente registros em EventoSanitario se o tratamento envolver aplicações diárias.
+
+5. 🦠 DoencaAnimal
+
+Histórico de doenças diagnosticadas em cada animal.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    
+obrigatorio    DataDiagnostico    
+obrigatorio    Doenca    Nome da doença
+opcionais     MetodoDiagnostico    Observação clínica, exame laboratorial
+opcionais     Gravidade    Enum: {Leve, Moderada, Grave, Crônica}
+opcionais     TratamentoId    FK → TratamentoAnimal
+opcionais     DataRecuperacao    
+opcionais     Status    Enum: {EmTratamento, Recuperado, Óbito}
+opcionais     Observacoes    
+6. 🧪 ExameLaboratorial
+
+Controle de exames laboratoriais ou clínicos.
+Tipo    Atributo    Descrição
+obrigatorio    Id    
+obrigatorio    AnimalId    
+obrigatorio    DataColeta    
+opcionais     DataResultado    
+obrigatorio    TipoExame    Enum: {Brucelose, Tuberculose, Sangue, Fezes, Urina, Outros}
+opcionais     Resultado    Positivo, Negativo, Indeterminado
+opcionais     Laboratorio    
+opcionais     ResponsavelId    
+opcionais     DocumentoResultadoUrl    
+opcionais     Observacoes    
+🔗 RELACIONAMENTOS PRINCIPAIS
+Entidade    Relacionamentos
+EventoSanitario    1:N com Animal; FK para Medicamento, TipoEventoSanitario, Responsavel
+Medicamento    1:N com EventoSanitario, 1:N com TratamentoAnimal
+TratamentoAnimal    1:1 opcional com DoencaAnimal
+DoencaAnimal    N:1 com Animal, 1:1 opcional com TratamentoAnimal
+ExameLaboratorial    N:1 com Animal
+Funcionario / Técnico    1:N com EventoSanitario, TratamentoAnimal, ExameLaboratorial
+⚙️ Regras e Boas Práticas de Modelagem
+
+    Ao criar um EventoSanitario, caso ProximaAplicacao esteja preenchida, gerar alerta automático para a agenda.
+
+    Medicamentos vencidos ou sem estoque devem bloquear novas aplicações.
+
+    Permitir registro em lote, aplicando o mesmo evento a vários animais.
+
+    Tratamentos devem ser finalizados automaticamente quando ultrapassar DataFim.
+
+    Permitir vincular exame a tratamento (ex: resultado de mastite antes/depois).
+
+    Relatórios úteis:
+        Animais com vacinas vencidas
+        Histórico sanitário por animal
+        Consumo de medicamentos por período
+        Taxa de morbidade / mortalidade
+
+
+🧩 Domínio: Produção
+1. Produção de Leite
+
+Registra a quantidade de leite produzida por animal, por ordenha ou por período, permitindo análises de produtividade.
+
+Entidade: ProducaoLeite
+Atributos:
+
+    id (PK)
+    animal_id (FK → Animal)
+    data_coleta (DATE) — obrigatório
+    quantidade_litros (DECIMAL(5,2)) — obrigatório
+    turno (ENUM: “Manhã”, “Tarde”, “Noite”) — opcional
+    ordenhador_id (FK → Pessoa ou Funcionário) — opcional
+    tanque_id (FK → TanqueLeite) — opcional
+    observacoes (TEXT) — opcional
+    temperatura_leite (DECIMAL(4,1)) — opcional
+
+2. Lactação
+
+Representa o ciclo de lactação de uma fêmea, vinculado a partos e períodos de produção ativa.
+
+Entidade: Lactacao
+Atributos:
+
+    id (PK)
+    animal_id (FK → Animal)
+    data_inicio (DATE) — obrigatório
+    data_fim (DATE) — opcional
+    numero_lactacao (INT) — obrigatório
+    duracao_dias (INT) — calculado
+    producao_total_litros (DECIMAL(7,2)) — calculado
+    media_diaria_litros (DECIMAL(5,2)) — calculado
+    estado (ENUM: “Ativa”, “Encerrada”, “Secagem”) — obrigatório
+
+Relacionamentos:
+
+    1 Animal → N Lactacao
+    1 Lactacao → N ProducaoLeite
+
+3. Pesagem
+
+Registra o peso corporal dos animais para controle de crescimento e nutrição.
+
+Entidade: Pesagem
+Atributos:
+
+    id (PK)
+    animal_id (FK → Animal)
+    data_pesagem (DATE) — obrigatório
+    peso_kg (DECIMAL(6,2)) — obrigatório
+    responsavel_id (FK → Pessoa ou Funcionário) — opcional
+    condicao_corporal (DECIMAL(2,1), escala 1–5) — opcional
+    observacoes (TEXT) — opcional
+    equipamento_id (FK → Equipamento) — opcional
+
+4. Ganho de Peso
+
+Derivado das pesagens, usado para análises de desempenho.
+
+Entidade: GanhoPeso (gerado automaticamente, mas pode ser armazenado para histórico)
+Atributos:
+
+    id (PK)
+    animal_id (FK → Animal)
+    data_inicio (DATE) — obrigatório
+    data_fim (DATE) — obrigatório
+    peso_inicial (DECIMAL(6,2)) — obrigatório
+    peso_final (DECIMAL(6,2)) — obrigatório
+    ganho_kg (DECIMAL(6,2)) — calculado
+    dias_intervalo (INT) — calculado
+    ganho_medio_diario (DECIMAL(5,2)) — calculado
+
+5. Tanque de Leite
+
+Controle de armazenamento e qualidade do leite.
+
+Entidade: TanqueLeite
+Atributos:
+
+    id (PK)
+    identificador (VARCHAR(50)) — obrigatório
+    capacidade_litros (DECIMAL(6,2)) — obrigatório
+    temperatura_atual (DECIMAL(4,1)) — opcional
+    status (ENUM: “Em uso”, “Limpeza”, “Manutenção”) — obrigatório
+    localizacao (VARCHAR(100)) — opcional
+
+🔗 Principais Relacionamentos
+
+    1 Animal → N ProducaoLeite
+    1 Animal → N Pesagem
+    1 Animal → N Lactacao
+    1 Lactacao → N ProducaoLeite
+    1 TanqueLeite → N ProducaoLeite
+
+
+🧩 Domínio: Nutrição / Alimentação
+1. Ração
+
+Registra os tipos de ração utilizados na propriedade, com composição e valores nutricionais.
+
+Entidade: Racao
+Atributos:
+
+    id (PK)
+    nome (VARCHAR(100)) — obrigatório
+    tipo (ENUM: “Concentrado”, “Volumoso”, “Mineral”, “Proteinado”, “Balanceada”) — obrigatório
+    fabricante (VARCHAR(100)) — opcional
+    fornecedor_id (FK → Fornecedor) — opcional
+    data_validade (DATE) — opcional
+    proteina_bruta_pct (DECIMAL(5,2)) — opcional
+    energia_mcal_kg (DECIMAL(5,2)) — opcional
+    fibra_pct (DECIMAL(5,2)) — opcional
+    materia_seca_pct (DECIMAL(5,2)) — opcional
+    descricao_composicao (TEXT) — opcional
+    observacoes (TEXT) — opcional
+
+2. Suplemento
+
+Registra suplementos minerais, vitamínicos ou energéticos utilizados na nutrição.
+
+Entidade: Suplemento
+Atributos:
+
+    id (PK)
+    nome (VARCHAR(100)) — obrigatório
+    tipo (ENUM: “Mineral”, “Vitamínico”, “Proteico”, “Energético”, “Adicional”) — obrigatório
+    fabricante (VARCHAR(100)) — opcional
+    fornecedor_id (FK → Fornecedor) — opcional
+    dosagem_recomendada (DECIMAL(6,2)) — opcional
+    unidade_dosagem (ENUM: “g/dia”, “kg/dia”, “mL/dia”, “% dieta”) — opcional
+    descricao_composicao (TEXT) — opcional
+    observacoes (TEXT) — opcional
+
+3. Pastagem
+
+Gerencia as áreas de pasto e suas características produtivas e de manejo.
+
+Entidade: Pastagem
+Atributos:
+
+    id (PK)
+    nome (VARCHAR(100)) — obrigatório
+    tipo_capim (VARCHAR(100)) — obrigatório
+    area_hectares (DECIMAL(6,2)) — obrigatório
+    capacidade_animais (INT) — opcional
+    data_plantio (DATE) — opcional
+    data_ultima_adubacao (DATE) — opcional
+    status (ENUM: “Em uso”, “Descanso”, “Recuperação”, “Plantio”) — obrigatório
+    observacoes (TEXT) — opcional
+
+4. Consumo Diário / Alimentação do Animal
+
+Registra o que foi fornecido a cada animal, lote ou grupo (importante para análises de custo e conversão alimentar).
+
+Entidade: AlimentacaoAnimal
+Atributos:
+
+    id (PK)
+    data (DATE) — obrigatório
+    animal_id (FK → Animal) — opcional
+    lote_id (FK → Lote) — opcional
+    racao_id (FK → Racao) — opcional
+    suplemento_id (FK → Suplemento) — opcional
+    pastagem_id (FK → Pastagem) — opcional
+    quantidade_racao_kg (DECIMAL(6,2)) — opcional
+    quantidade_suplemento_kg (DECIMAL(6,2)) — opcional
+    tempo_pastoreio_horas (DECIMAL(4,2)) — opcional
+    responsavel_id (FK → Pessoa ou Funcionário) — opcional
+    observacoes (TEXT) — opcional
+
+    💡 Regra de negócio: Pode ser registrada por animal individual ou por lote.
+    Em fazendas grandes, o lote é mais comum. Em fazendas de reprodução, o individual é importante.
+
+5. Planejamento Nutricional
+
+Permite definir dietas padrão ou planos de alimentação conforme fase produtiva.
+
+Entidade: PlanoNutricao
+Atributos:
+
+    id (PK)
+    nome (VARCHAR(100)) — obrigatório
+    descricao (TEXT) — opcional
+    fase (ENUM: “Bezerro”, “Novilha”, “Lactante”, “Gestante”, “Touros”, “Engorda”) — obrigatório
+    racao_id (FK → Racao) — opcional
+
+    suplemento_id (FK → Suplemento) — opcional
+    quantidade_racao_kg (DECIMAL(6,2)) — opcional
+    quantidade_suplemento_kg (DECIMAL(6,2)) — opcional
+    observacoes (TEXT) — opcional
+
+Relacionamentos:
+
+    1 PlanoNutricao → N AlimentacaoAnimal
+    1 PlanoNutricao pode ser vinculado a N Lotes
+
+6. Controle de Estoque Nutricional
+
+Gerencia o estoque de insumos alimentares.
+
+Entidade: EstoqueNutricao
+Atributos:
+
+    id (PK)
+    produto_tipo (ENUM: “Ração”, “Suplemento”) — obrigatório
+    produto_id (FK → Racao ou Suplemento)
+    quantidade_atual_kg (DECIMAL(8,2)) — obrigatório
+    data_atualizacao (DATE) — obrigatório
+    local_armazenamento (VARCHAR(100)) — opcional
+    responsavel_id (FK → Pessoa ou Funcionário) — opcional
+
+🔗 Principais Relacionamentos
+
+    1 Racao → N AlimentacaoAnimal
+    1 Suplemento → N AlimentacaoAnimal
+    1 Pastagem → N AlimentacaoAnimal
+    1 PlanoNutricao → N AlimentacaoAnimal
+    1 Animal → N AlimentacaoAnimal
+    1 Lote → N 
